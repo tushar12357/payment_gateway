@@ -1,0 +1,23 @@
+import crypto from "crypto";
+import Merchant from "./merchant.model.js";
+
+const generateKey = () => crypto.randomBytes(16).toString("hex");
+const generateSecret = () => crypto.randomBytes(32).toString("hex");
+
+export const createMerchant = async ({ name, webhookUrl }) => {
+  const apiKey = generateKey();
+  const apiSecret = generateSecret();
+
+  const merchant = await Merchant.create({
+    name,
+    webhookUrl,
+    apiKey,
+    apiSecret,
+  });
+
+  return {
+    merchantId: merchant._id,
+    apiKey,
+    apiSecret, // ⚠️ show ONLY ONCE
+  };
+};
