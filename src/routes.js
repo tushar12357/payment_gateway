@@ -5,9 +5,9 @@ import pgRoutes from "./modules/pg/pg.routes.js";
 import webhookRoutes from "./modules/webhooks/webhook.routes.js";
 
 export default (app) => {
-  app.use("/auth", authRoutes);
-  app.use("/wallet", walletRoutes);
-  app.use("/merchants", merchantRoutes);
-  app.use("/pg", pgRoutes);
-  app.use("/webhooks", webhookRoutes);
+  app.use("/api/auth", authRoutes);
+  app.use("/api/wallet", walletRoutes);
+  app.use("/api/merchants", merchantRoutes);
+  app.use("/api/pg", pgRoutes);
+  app.use("/api/webhooks", webhookRoutes);
 };
