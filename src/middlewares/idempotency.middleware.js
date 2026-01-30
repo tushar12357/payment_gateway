@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { redis } from "../redis.js";
+import { redis } from "../config/redis.js";
 
 export const idempotency = (ttlSeconds = 300) => {
   return async (req, res, next) => {
