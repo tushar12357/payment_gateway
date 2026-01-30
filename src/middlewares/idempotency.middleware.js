@@ -1,7 +1,5 @@
 import crypto from "crypto";
-import Redis from "ioredis";
-
-const redis = new Redis(process.env.REDIS_URL);
+import { redis } from "../redis.js";
 
 export const idempotency = (ttlSeconds = 300) => {
   return async (req, res, next) => {
