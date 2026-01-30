@@ -7,7 +7,7 @@ import "./queues/webhook.queue.js";
 const PORT = process.env.PORT || 3000;
 
 const start = async () => {
-  await connectDB();
+ 
 app.get('/', (req, res) => {
   res.status(200).send('OK');
 });
@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
  app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
-
+ await connectDB();
   startSettlementCron();
 };
 
