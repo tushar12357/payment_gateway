@@ -7,7 +7,7 @@ const app = express();
 
 app.use(cors());
 app.use(
-  "/webhooks/razorpay/",
+  "/webhooks/razorpay",
   express.raw({ type: "application/json" })
 );
 app.use(express.json());

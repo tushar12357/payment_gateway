@@ -7,6 +7,6 @@ const router = express.Router();
  * Razorpay Webhook
  * IMPORTANT: must use raw body in production
  */
-router.post("/razorpay/", razorpayWebhook);
+router.post("/", razorpayWebhook);
 
 export default router;
