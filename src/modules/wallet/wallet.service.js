@@ -31,18 +31,14 @@ export const getWalletBalance = async (walletId) => {
   return credit - debit;
 };
 
-
-export const transferMoney = async ({
-  fromUserId,
-  toPhone,
-  amount,
-  note,
-}) => {
+export const transferMoney = async ({ fromUserId, toPhone, amount, note }) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const senderWallet = await Wallet.findOne({ userId: fromUserId }).session(session);
+    const senderWallet = await Wallet.findOne({ userId: fromUserId }).session(
+      session,
+    );
 
     const senderBalance = await Transaction.aggregate([
       { $match: { walletId: senderWallet._id, status: "success" } },
@@ -68,12 +64,21 @@ export const transferMoney = async ({
 
     let receiver = await User.findOne({ phone: toPhone }).session(session);
     if (!receiver) {
-      receiver = await User.create([{ phone: toPhone, isPhoneVerified: false }], { session });
-      await Wallet.create([{ userId: receiver[0]._id }], { session });
+      receiver = await User.create(
+        [{ phone: toPhone, isPhoneVerified: false }],
+        { session, ordered: true },
+      );
+
+      await Wallet.create([{ userId: receiver[0]._id }], {
+        session,
+        ordered: true,
+      });
       receiver = receiver[0];
     }
 
-    const receiverWallet = await Wallet.findOne({ userId: receiver._id }).session(session);
+    const receiverWallet = await Wallet.findOne({
+      userId: receiver._id,
+    }).session(session);
 
     const txGroupId = uuidv4();
 
@@ -98,7 +103,7 @@ export const transferMoney = async ({
           status: "success",
         },
       ],
-      { session }
+      { session, ordered: true },
     );
 
     await session.commitTransaction();
