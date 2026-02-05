@@ -20,7 +20,7 @@ export const sendOtp = async (phone) => {
 
   const otp = generateOtp();
   const hash = await bcrypt.hash(otp, 10);
-
+console.log(otp)
   await Otp.create({
     phone,
     otpHash: hash,
@@ -57,5 +57,5 @@ export const verifyOtp = async ({ phone, otp }) => {
     { expiresIn: "1d" }
   );
 
-  return { token };
+  return { token, user };
 };
