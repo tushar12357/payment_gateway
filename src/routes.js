@@ -9,5 +9,5 @@ export default (app) => {
   app.use("/api/wallet", walletRoutes);
   app.use("/api/merchants", merchantRoutes);
   app.use("/api/pg", pgRoutes);
-  app.use("/api/webhooks", webhookRoutes);
+  app.use("/webhooks", webhookRoutes);
 };

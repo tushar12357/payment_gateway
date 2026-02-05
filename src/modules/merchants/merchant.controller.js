@@ -1,4 +1,4 @@
-import { createMerchant } from "./merchant.service.js";
+import { createMerchant, getMerchants } from "./merchant.service.js";
 
 export const createMerchantController = async (req, res) => {
   const { name, webhookUrl } = req.body;
@@ -12,5 +12,14 @@ export const createMerchantController = async (req, res) => {
   res.status(201).json({
     message: "Merchant created",
     credentials: merchant,
+  });
+};
+
+
+export const getMerchantsController = async (req, res) => {
+  const merchants = await getMerchants();
+
+  res.json({
+    data: merchants,
   });
 };

@@ -21,3 +21,10 @@ export const createMerchant = async ({ name, webhookUrl }) => {
     apiSecret, // ⚠️ show ONLY ONCE
   };
 };
+
+
+export const getMerchants = async () => {
+  return Merchant.find({})
+    .select("_id name webhookUrl apiKey apiSecret status createdAt")
+    .sort({ createdAt: -1 });
+};

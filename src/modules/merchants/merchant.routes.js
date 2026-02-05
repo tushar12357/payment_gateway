@@ -1,5 +1,5 @@
 import express from "express";
-import { createMerchantController } from "./merchant.controller.js";
+import { createMerchantController, getMerchantsController } from "./merchant.controller.js";
 
 const router = express.Router();
 
@@ -8,5 +8,6 @@ const router = express.Router();
  * For now, keep it open or protect with env token
  */
 router.post("/", createMerchantController);
+router.get("/", getMerchantsController);
 
 export default router;
