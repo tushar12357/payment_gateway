@@ -1,18 +1,15 @@
-import axios from "axios";
+// utils/sms.js
+import twilio from "twilio";
+
+const client = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
 
 export const sendOtpSms = async (phone, otp) => {
-  await axios.post(
-    "https://api.msg91.com/api/v5/otp",
-    {
-      mobile: `91${phone}`,
-      otp,
-      sender: process.env.MSG91_SENDER_ID,
-    },
-    {
-      headers: {
-        authkey: process.env.MSG91_AUTH_KEY,
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  await client.messages.create({
+    body: `Your OTP is ${otp}. Valid for 5 minutes.`,
+    from: process.env.TWILIO_PHONE,
+    to: phone,
+  });
 };

@@ -1,22 +1,13 @@
+// auth/otp.model.js
 import mongoose from "mongoose";
 
 const otpSchema = new mongoose.Schema(
   {
-    phone: {
-      type: String,
-      required: true,
-      index: true,
-    },
-
-    otp: {
-      type: String,
-      required: true,
-    },
-
+    phone: { type: String, index: true },
+    otpHash: String,
     expiresAt: {
       type: Date,
-      required: true,
-      index: { expires: 0 }, // auto delete
+      index: { expires: 0 },
     },
   },
   { timestamps: true }
