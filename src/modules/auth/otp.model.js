@@ -3,17 +3,15 @@ import mongoose from "mongoose";
 
 const otpSchema = new mongoose.Schema(
   {
-    phone: { type: String, index: true },
-    email: { type: String, index: true },
-
-    otpHash: String,
-
-    expiresAt: {
-      type: Date,
-      index: { expires: 0 },
-    },
+    phone: { type: String },
+    email: { type: String },
+    otpHash: { type: String, required: true },
+    expiresAt: { type: Date, required: true },
   },
   { timestamps: true }
 );
+
+otpSchema.index({ phone: 1, createdAt: -1 });
+otpSchema.index({ email: 1, createdAt: -1 });
 
 export default mongoose.model("Otp", otpSchema);

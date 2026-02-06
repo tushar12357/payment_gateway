@@ -21,7 +21,7 @@ export const sendOtp = async (phone) => {
 
   const otp = generateOtp();
   const hash = await bcrypt.hash(otp, 10);
-console.log(otp)
+  console.log(otp);
   await Otp.create({
     phone,
     otpHash: hash,
@@ -52,15 +52,12 @@ export const verifyOtp = async ({ phone, otp }) => {
 
   await Otp.deleteMany({ phone });
 
-  const token = jwt.sign(
-    { userId: user._id },
-    process.env.JWT_SECRET,
-    { expiresIn: "1d" }
-  );
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
 
   return { token, user };
 };
-
 
 export const sendEmailOtp = async (email) => {
   const recent = await Otp.countDocuments({
@@ -71,24 +68,22 @@ export const sendEmailOtp = async (email) => {
   if (recent >= 3) throw new Error("OTP limit exceeded");
 
   const otp = generateOtp();
-  const hash = await bcrypt.hash(otp, 10);
-
-  console.log("EMAIL OTP:", otp);
+  const otpHash = await bcrypt.hash(otp, 6);
 
   await Otp.create({
     email,
-    otpHash: hash,
+    otpHash,
     expiresAt: new Date(Date.now() + 5 * 60 * 1000),
   });
 
-  await sendOtpEmail(email, otp);
+  // 🔥 NON-BLOCKING EMAIL
+  sendOtpEmail(email, otp).catch(console.error);
 };
 
 export const verifyEmailOtp = async ({ email, otp }) => {
   const record = await Otp.findOne({ email }).sort({ createdAt: -1 });
-
-  if (!record) throw new Error("Invalid or expired OTP");
-  if (record.expiresAt < new Date()) throw new Error("OTP expired");
+  if (!record || record.expiresAt < new Date())
+    throw new Error("Invalid or expired OTP");
 
   const valid = await bcrypt.compare(otp, record.otpHash);
   if (!valid) throw new Error("Invalid OTP");
@@ -96,21 +91,15 @@ export const verifyEmailOtp = async ({ email, otp }) => {
   let user = await User.findOne({ email });
 
   if (!user) {
-    user = await User.create({
-      email,
-      isEmailVerified: true,
-    });
+    user = await User.create({ email, isEmailVerified: true });
     await Wallet.create({ userId: user._id });
   }
 
   await Otp.deleteMany({ email });
 
-  const token = jwt.sign(
-    { userId: user._id },
-    process.env.JWT_SECRET,
-    { expiresIn: "1d" }
-  );
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
 
   return { token, user };
 };
-
