@@ -82,3 +82,49 @@ export const transferMoneyController = async (req, res, next) => {
     next(err);
   }
 };
+
+
+export const getTransactionHistoryController = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+
+    const {
+      page = 1,
+      limit = 20,
+      type,        
+      purpose,     
+      status,     
+    } = req.query;
+
+    const wallet = await Wallet.findOne({ userId });
+    if (!wallet) {
+      return res.status(404).json({ message: "Wallet not found" });
+    }
+
+    const filter = { walletId: wallet._id };
+
+    if (type) filter.type = type;
+    if (purpose) filter.purpose = purpose;
+    if (status) filter.status = status;
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [transactions, total] = await Promise.all([
+      Transaction.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(Number(limit)),
+      Transaction.countDocuments(filter),
+    ]);
+
+    res.json({
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      totalPages: Math.ceil(total / limit),
+      transactions,
+    });
+  } catch (err) {
+    next(err);
+  }
+};

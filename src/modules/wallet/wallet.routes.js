@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createWalletTopup,
+  getTransactionHistoryController,
   getWalletBalanceController,
   transferMoneyController,
 } from "./wallet.controller.js";
@@ -34,5 +35,10 @@ router.post(
   transferMoneyController
 );
 
+router.get(
+  "/transactions",
+  authMiddleware,
+  getTransactionHistoryController
+);
 
 export default router;
