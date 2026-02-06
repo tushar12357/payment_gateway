@@ -8,7 +8,9 @@ const userSchema = new mongoose.Schema(
     },
 
     phone: {
+      default:0,
       type: String,
+      sparse:true,
       unique: true,
       index: true,
     },
