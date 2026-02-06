@@ -5,6 +5,7 @@ import Otp from "./otp.model.js";
 import User from "../users/user.model.js";
 import Wallet from "../wallet/wallet.model.js";
 import { sendOtpSms } from "../../utils/sms.js";
+import { sendOtpEmail } from "../../utils/email.js";
 
 const generateOtp = () =>
   Math.floor(100000 + Math.random() * 900000).toString();
@@ -59,3 +60,57 @@ export const verifyOtp = async ({ phone, otp }) => {
 
   return { token, user };
 };
+
+
+export const sendEmailOtp = async (email) => {
+  const recent = await Otp.countDocuments({
+    email,
+    createdAt: { $gte: new Date(Date.now() - 10 * 60 * 1000) },
+  });
+
+  if (recent >= 3) throw new Error("OTP limit exceeded");
+
+  const otp = generateOtp();
+  const hash = await bcrypt.hash(otp, 10);
+
+  console.log("EMAIL OTP:", otp);
+
+  await Otp.create({
+    email,
+    otpHash: hash,
+    expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+  });
+
+  await sendOtpEmail(email, otp);
+};
+
+export const verifyEmailOtp = async ({ email, otp }) => {
+  const record = await Otp.findOne({ email }).sort({ createdAt: -1 });
+
+  if (!record) throw new Error("Invalid or expired OTP");
+  if (record.expiresAt < new Date()) throw new Error("OTP expired");
+
+  const valid = await bcrypt.compare(otp, record.otpHash);
+  if (!valid) throw new Error("Invalid OTP");
+
+  let user = await User.findOne({ email });
+
+  if (!user) {
+    user = await User.create({
+      email,
+      isEmailVerified: true,
+    });
+    await Wallet.create({ userId: user._id });
+  }
+
+  await Otp.deleteMany({ email });
+
+  const token = jwt.sign(
+    { userId: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: "1d" }
+  );
+
+  return { token, user };
+};
+

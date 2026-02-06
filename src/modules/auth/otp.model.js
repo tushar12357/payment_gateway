@@ -4,7 +4,10 @@ import mongoose from "mongoose";
 const otpSchema = new mongoose.Schema(
   {
     phone: { type: String, index: true },
+    email: { type: String, index: true },
+
     otpHash: String,
+
     expiresAt: {
       type: Date,
       index: { expires: 0 },

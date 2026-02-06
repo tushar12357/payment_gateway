@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema(
 
     phone: {
       type: String,
-      required: true,
       unique: true,
       index: true,
     },
@@ -23,6 +22,16 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    email: {
+      type: String,
+      lowercase: true,
+      unique: true,
+      sparse: true,
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
 
     status: {
       type: String,
@@ -30,7 +39,7 @@ const userSchema = new mongoose.Schema(
       default: "active",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("User", userSchema);
