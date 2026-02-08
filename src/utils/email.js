@@ -1,3 +1,5 @@
+import nodemailer from 'nodemailer';
+
 export const sendOtpEmail = async (email, otp) => {
   try {
     console.log("inside send otp");
