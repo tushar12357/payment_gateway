@@ -13,6 +13,6 @@ new Worker(
   },
   {
     connection: redisConnection,
-    concurrency: 1,
+    concurrency: 5,
   }
 );
