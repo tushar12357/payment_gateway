@@ -79,10 +79,12 @@ export const sendEmailOtp = async (email) => {
 
   // 🔥 NON-BLOCKING EMAIL
   // sendOtpEmail(email, otp).catch(console.error);
-  await emailOtpQueue.add("send-email-otp", {
-  email,
-  otp,
-});
+  emailOtpQueue
+  .add("send-email-otp", { email, otp })
+  .catch((err) => {
+    console.error("QUEUE ADD FAILED:", err);
+  });
+
 };
 
 export const verifyEmailOtp = async ({ email, otp }) => {
