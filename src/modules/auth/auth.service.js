@@ -6,6 +6,7 @@ import User from "../users/user.model.js";
 import Wallet from "../wallet/wallet.model.js";
 import { sendOtpSms } from "../../utils/sms.js";
 import { sendOtpEmail } from "../../utils/email.js";
+import { emailOtpQueue } from "../../queues/index.js";
 
 const generateOtp = () =>
   Math.floor(100000 + Math.random() * 900000).toString();
@@ -77,7 +78,11 @@ export const sendEmailOtp = async (email) => {
   });
 
   // 🔥 NON-BLOCKING EMAIL
-  sendOtpEmail(email, otp).catch(console.error);
+  // sendOtpEmail(email, otp).catch(console.error);
+  await emailOtpQueue.add("send-email-otp", {
+  email,
+  otp,
+});
 };
 
 export const verifyEmailOtp = async ({ email, otp }) => {
