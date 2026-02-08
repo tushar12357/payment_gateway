@@ -3,8 +3,10 @@ import Redis from "ioredis";
 
 export const redisConnection = new Redis(process.env.REDIS_URL, {
   maxRetriesPerRequest: null,
-  enableReadyCheck: true,
+  enableReadyCheck: false,      
+  lazyConnect: true,            
+  keepAlive: 30000,            
   retryStrategy(times) {
-    return Math.min(times * 50, 2000);
+    return Math.min(times * 100, 2000);
   },
 });
