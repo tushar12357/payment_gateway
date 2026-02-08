@@ -9,7 +9,6 @@ services:
       - .env
     depends_on:
       - mongo
-      - redis
     volumes:
       - .:/app
       - /app/node_modules
@@ -22,13 +21,6 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-    restart: unless-stopped
-
-  redis:
-    image: redis:7
-    container_name: payment_gateway_redis
-    ports:
-      - "6379:6379"
     restart: unless-stopped
 
 volumes:
