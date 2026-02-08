@@ -3,7 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import routes from "./routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
-
+import './jobs.js'
 const app = express();
 
 app.use(
